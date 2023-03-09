@@ -74,9 +74,7 @@ export const getCategoriesAndDocuments = async () => {
 export const createUserDoucumentFromAuth = async (userAuth) => {
     // Checking if the specific data exist in the db or not.
     const userDocRef = doc(db, 'users', userAuth.uid)
-    console.log(userDocRef)
     const userSnapshot = await getDoc(userDocRef)
-    console.log(userSnapshot.exists())
 
     // If user does't exist then create the user
     if (!userSnapshot.exists()) {

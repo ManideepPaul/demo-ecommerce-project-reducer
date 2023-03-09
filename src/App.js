@@ -1,17 +1,40 @@
-import { Routes, Route } from 'react-router-dom'
+import { useEffect, } from "react";
+import { useDispatch } from 'react-redux';
+
+import { Routes, Route } from 'react-router-dom';
+
+import {
+  onAuthStateChangedListener,
+  createUserDoucumentFromAuth
+} from './utils/firebase/firebase.utils'
+
+
 import Navigation from './routes/navigation/navigation.component';
 import Home from "./routes/home/home.component";
 import Authentication from './routes/authentication/authentication.component';
 import Shop from './routes/shop/shop.component';
 import Checkout from './routes/checkout/checkout.component';
+import { setCurrentUser } from './store/user/user.action';
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        createUserDoucumentFromAuth(user)
+      }
+      dispatch(setCurrentUser(user));
+    })
+    return unsubscribe;
+  }, [])
+
   return (
     <Routes>
       <Route path='/' element={<Navigation />}>
         <Route index element={<Home />} />
         <Route path='auth' element={<Authentication />} />
-         <Route path='shop/*' element={<Shop />} />{/* 'shop/*' means if route matches shop/anything then send him to the shop page */}
+        <Route path='shop/*' element={<Shop />} />{/* 'shop/*' means if route matches shop/anything then send him to the shop page */}
         <Route path='checkout' element={<Checkout />} />
       </Route>
     </Routes>
